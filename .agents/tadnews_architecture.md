@@ -139,6 +139,36 @@ tadnews 已具備新模組的骨架，`xoops-lint` 實測以下 error 規則皆�
 
 ---
 
+## 5b. 驗收工具（每次改碼後都要跑）
+
+| 工具 | 抓什麼 | 指令 |
+|---|---|---|
+| `php -l` | 語法錯誤 | `php -l <檔>` |
+| **xoops-lint** | 規範違規（ENTRY-SQL、VAR-VAR…） | `php D:/workspace/02_Tools/xoops-lint/xoops-lint.php .` |
+| **xoops-refactor-verify** | **搬移造成的執行期破壞** | `php D:/workspace/02_Tools/xoops-refactor-verify/verify.php` |
+
+第三項是 Phase 4 結束後補建的，因為前兩項有共同盲區 —— 以下兩類破壞它們都看不到，只會在使用者點下去時炸掉：
+
+1. **搬走函式後漏改某個呼叫端** → 呼叫不存在的函式，fatal。
+2. **搬進方法後漏宣告 `global $xoopsDB`** → 不報錯，變數變成 `null`，SQL 靜默失效。這類最陰險。
+
+> 該工具以 `token_get_all()` 解析。初版用 regex，把 SQL 字串裡的 `AND (`、heredoc 裡的 JS `getElementById()`、註解掉的 `//$xoopsTpl->assign()` 全當成真實呼叫，噴出數十條誤判。**會亂叫的檢查比沒有檢查更糟。**
+
+> 工具本身也做過注入故障的反向測試，確認抓得到問題 —— 一個永遠通過的檢查等於沒有檢查。
+
+**Phase 4 結束時的實測結果：A、B 兩項皆為 0。**
+
+### 仍未驗證的部分（重要）
+
+以上全是**靜態**檢查，驗證的是結構不是行為。**至今未做過任何執行期驗證。** 以下風險仍在：
+
+- 樣板變數：方法少 `assign()` 一個變數，或樣板取用了沒 assign 的變數 —— 靜態工具看不到。
+- 實際的 CRUD 流程、權限判斷、電子報寄送、檔案上傳是否仍正常。
+
+**進入 Phase 5 前，應先以瀏覽器實際走過一輪主要流程**（前台列表／單篇／單頁、後台分類 CRUD、標籤、電子報建立與預覽、匯入頁）。目前程式碼已在 git 保護下（首次 commit：入口檔 SQL 全數移入 class/），出問題可比對還原。
+
+---
+
 ## 6. 開發鐵則
 
 1. **狀態傳遞**：新方法一律「參數傳入」，**不得再新增任何 `set_xxx()`**。既有 Fluent 方法逐步汰換，不強制一次重寫。
@@ -401,6 +431,36 @@ tadnews 已具備新模組的骨架，`xoops-lint` 實測以下 error 規則皆�
 | `HEADING` | 26 | 15 個 tpl |
 | `HARDCODED-ZH` | 6 | 4 檔 |
 | `IMG-SIZE` | 1 | `templates/sub_rss.tpl` |
+
+---
+
+## 5b. 驗收工具（每次改碼後都要跑）
+
+| 工具 | 抓什麼 | 指令 |
+|---|---|---|
+| `php -l` | 語法錯誤 | `php -l <檔>` |
+| **xoops-lint** | 規範違規（ENTRY-SQL、VAR-VAR…） | `php D:/workspace/02_Tools/xoops-lint/xoops-lint.php .` |
+| **xoops-refactor-verify** | **搬移造成的執行期破壞** | `php D:/workspace/02_Tools/xoops-refactor-verify/verify.php` |
+
+第三項是 Phase 4 結束後補建的，因為前兩項有共同盲區 —— 以下兩類破壞它們都看不到，只會在使用者點下去時炸掉：
+
+1. **搬走函式後漏改某個呼叫端** → 呼叫不存在的函式，fatal。
+2. **搬進方法後漏宣告 `global $xoopsDB`** → 不報錯，變數變成 `null`，SQL 靜默失效。這類最陰險。
+
+> 該工具以 `token_get_all()` 解析。初版用 regex，把 SQL 字串裡的 `AND (`、heredoc 裡的 JS `getElementById()`、註解掉的 `//$xoopsTpl->assign()` 全當成真實呼叫，噴出數十條誤判。**會亂叫的檢查比沒有檢查更糟。**
+
+> 工具本身也做過注入故障的反向測試，確認抓得到問題 —— 一個永遠通過的檢查等於沒有檢查。
+
+**Phase 4 結束時的實測結果：A、B 兩項皆為 0。**
+
+### 仍未驗證的部分（重要）
+
+以上全是**靜態**檢查，驗證的是結構不是行為。**至今未做過任何執行期驗證。** 以下風險仍在：
+
+- 樣板變數：方法少 `assign()` 一個變數，或樣板取用了沒 assign 的變數 —— 靜態工具看不到。
+- 實際的 CRUD 流程、權限判斷、電子報寄送、檔案上傳是否仍正常。
+
+**進入 Phase 5 前，應先以瀏覽器實際走過一輪主要流程**（前台列表／單篇／單頁、後台分類 CRUD、標籤、電子報建立與預覽、匯入頁）。目前程式碼已在 git 保護下（首次 commit：入口檔 SQL 全數移入 class/），出問題可比對還原。
 
 ---
 
