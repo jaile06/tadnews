@@ -1,6 +1,7 @@
 <?php
 use Xmf\Request;
 use XoopsModules\Tadnews\Sign;
+use XoopsModules\Tadnews\Tadnews;
 use XoopsModules\Tadtools\CategoryHelper;
 use XoopsModules\Tadtools\StarRating;
 use XoopsModules\Tadtools\TadUpFiles;
