@@ -580,6 +580,10 @@ class Tadnews
 
         $ncsn_cate_setup = isset($cate_setup[$ncsn]) ? $cate_setup[$ncsn] : '';
         $set             = $this->get_setup($ncsn_cate_setup);
+        //分類沒存過設定時 get_setup() 回傳 ''，補成預設值（工具列、標題預設顯示）
+        if (!is_array($set)) {
+            $set = ['title' => 1, 'tool' => 1];
+        }
         if ('page' === $this->kind) {
             //die(var_dump($cate_setup[$ncsn]));
             //die(var_dump($set));
@@ -682,8 +686,9 @@ class Tadnews
             $and_keyword = '';
         }
 
-        //die($this->view_month);
-        $bar = '';
+        // 初始化分頁條與總筆數
+        $bar   = '';
+        $total = 0;
         if (!empty($this->skip_news)) {
             $sql    = 'select * from ' . $xoopsDB->prefix('tad_news') . " where 1 $where_news $and_enable $where_uid $where_tag $where_cate $and_keyword $date_chk $desc";
             $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -1189,6 +1194,7 @@ class Tadnews
                 $subnews[$j]['need_sign']      = $need_sign;
                 $subnews[$j]['files']          = $this->get_news_files($nsn, 'small');
                 $subnews[$j]['uid_name']       = $uid_name;
+                $subnews[$j]['page_sort']      = $page_sort;
                 $j++;
             }
             $all_news[$i]['pic_w']    = $pic_w;
@@ -1829,18 +1835,23 @@ class Tadnews
         $CkEditor->setHeight(350);
         $editor = $CkEditor->render();
 
-        $CkEditor = new CkEditor('tadnews', 'tab_content[0]', $tab_arr['tab_content'][0]);
+        // 頁籤頂部內容編輯器
+        $tab_content0 = $tab_arr['tab_content'][0] ?? '';
+        $CkEditor     = new CkEditor('tadnews', 'tab_content[0]', $tab_content0);
         $CkEditor->setHeight(100);
         $tab_editor0 = $CkEditor->render();
-        if ($tab_arr) {
+
+        $tab_editor = '';
+        if (!empty($tab_arr['tab_content']) && is_array($tab_arr['tab_content'])) {
             foreach ($tab_arr['tab_content'] as $k => $content) {
-                $CkEditor = new CkEditor('tadnews', "tab_content[$k]", $content);
+                $CkEditor                  = new CkEditor('tadnews', "tab_content[$k]", $content ?? '');
                 $CkEditor->setHeight(300);
                 $tab_arr['tab_editor'][$k] = $CkEditor->render();
-                $tab_arr['tab_title'][$k]  = $myts->htmlSpecialChars($tab_arr['tab_title'][$k]);
+                $tab_arr['tab_title'][$k]  = isset($tab_arr['tab_title'][$k]) ? $myts->htmlSpecialChars($tab_arr['tab_title'][$k]) : '';
             }
         } else {
-            $CkEditor = new CkEditor('tadnews', 'tab_content[1]', $tab_arr['tab_content'][1]);
+            $tab_content1 = $tab_arr['tab_content'][1] ?? '';
+            $CkEditor     = new CkEditor('tadnews', 'tab_content[1]', $tab_content1);
             $CkEditor->setHeight(300);
             $tab_editor = $CkEditor->render();
         }
@@ -2349,7 +2360,7 @@ class Tadnews
     {
         global $xoopsDB;
         if (empty($ncsn)) {
-            return;
+            return [];
         }
 
         $ncsn   = (int) $ncsn;
@@ -2357,14 +2368,17 @@ class Tadnews
         $result = Utility::query($sql, 'i', [$ncsn]) or Utility::web_error($sql, __FILE__, __LINE__);
 
         $data = $xoopsDB->fetchArray($result);
+        if (empty($data)) {
+            return [];
+        }
 
         $sql2    = 'SELECT COUNT(*) FROM `' . $xoopsDB->prefix('tad_news') . '` WHERE `ncsn`=?';
         $result2 = Utility::query($sql2, 'i', [$ncsn]);
 
         list($counter)  = $xoopsDB->fetchRow($result2);
         $data['count']  = $counter;
-        $data['g_txt']  = Utility::txt_to_group_name($data['enable_group'], _TADNEWS_ALL_OK);
-        $data['gp_txt'] = Utility::txt_to_group_name($data['enable_post_group'], _MD_TADNEWS_ONLY_ROOT, ' , ');
+        $data['g_txt']  = Utility::txt_to_group_name($data['enable_group'] ?? '', _TADNEWS_ALL_OK);
+        $data['gp_txt'] = Utility::txt_to_group_name($data['enable_post_group'] ?? '', _MD_TADNEWS_ONLY_ROOT, ' , ');
 
         return $data;
     }
@@ -2611,7 +2625,9 @@ class Tadnews
         $sql = 'SELECT LEFT(`start_day`, 7), COUNT(*) FROM `' . $xoopsDB->prefix('tad_news') . '` WHERE `enable`=? GROUP BY LEFT(`start_day`, 7) ORDER BY `start_day` DESC';
         $result = Utility::query($sql, 's', [1]) or Utility::web_error($sql, __FILE__, __LINE__);
 
-        $i = 1;
+        // 初始化月份選項陣列
+        $opt = [];
+        $i   = 1;
         while (list($ym, $count) = $xoopsDB->fetchRow($result)) {
             $opt[$i]['value'] = $ym;
             $opt[$i]['count'] = $count;

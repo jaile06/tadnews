@@ -39,7 +39,7 @@ switch ($op) {
         exit;
 
     default:
-        list_tad_my_news();
+        list_tad_my_news($kind, $ncsn);
         break;
 }
 
@@ -58,9 +58,9 @@ require_once XOOPS_ROOT_PATH . '/footer.php';
 /*-----------function區--------------*/
 
 //列出某人所有新聞
-function list_tad_my_news()
+function list_tad_my_news($kind = '', $the_ncsn = 0)
 {
-    global $xoopsModuleConfig, $xoopsTpl, $interface_menu, $xoopsUser, $Tadnews;
+    global $xoopsModuleConfig, $xoopsUser, $Tadnews;
     if (!$xoopsUser) {
         redirect_header('index.php', 3, _TAD_PERMISSION_DENIED);
     }
@@ -77,6 +77,4 @@ function list_tad_my_news()
         $Tadnews->set_view_ncsn($the_ncsn);
     }
     $Tadnews->get_news();
-
-    $xoopsTpl->assign('toolbar', Utility::toolbar_bootstrap($interface_menu, false, $interface_icon));
 }

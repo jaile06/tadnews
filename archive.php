@@ -46,11 +46,10 @@ require_once XOOPS_ROOT_PATH . '/footer.php';
 
 /*-----------function區--------------*/
 
-
 //分月新聞
 function archive($date = '')
 {
-    global $xoopsModuleConfig, $xoopsTpl, $interface_menu, $Tadnews;
+    global $xoopsTpl, $Tadnews;
 
     if (empty($date)) {
         $date = date('Y-m');
@@ -60,7 +59,6 @@ function archive($date = '')
     $Tadnews->set_show_month($date);
     $Tadnews->set_show_enable(1);
     $Tadnews->get_news();
-    $xoopsTpl->assign('toolbar', Utility::toolbar_bootstrap($interface_menu, false, $interface_icon));
     $date_title = Utility::to_utf8(str_replace('-', '' . _MD_TADNEWS_YEAR . ' ', $date) . _MD_TADNEWS_MONTH . _MD_TADNEWS_NEWS_TITLE);
     $xoopsTpl->assign('date_title', $date_title);
 }

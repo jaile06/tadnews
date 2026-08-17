@@ -50,7 +50,8 @@ class Cate
 
         $Tadnews->get_news('assign');
         $xoopsTpl->assign('options', $options);
-        $xoopsTpl->assign('ncsn', $the_ncsn);
+        //沒指定分類時給空字串：樣板用 $ncsn!="" 判斷，PHP 8 起 0 != "" 為真會誤判成有選分類
+        $xoopsTpl->assign('ncsn', empty($the_ncsn) ? '' : (int) $the_ncsn);
         $cate = $Tadnews->get_tad_news_cate($the_ncsn);
         $xoopsTpl->assign('cate', $cate);
 
@@ -498,7 +499,7 @@ class Cate
         global $xoopsDB;
 
         if (self::chk_cate_path($ncsn, $of_ncsn)) {
-            die('不可移至自己的子目錄下'); // ponytail: 原樣保留；收進語言包屬 HARDCODED-ZH 的獨立工作
+            die(_MD_TADNEWS_CANT_MOVE_TO_SELF);
         }
 
         $sql = 'UPDATE `' . $xoopsDB->prefix('tad_news_cate') . '` SET `of_ncsn`=? WHERE `ncsn`=?';

@@ -44,10 +44,7 @@ class Update
         list($length) = $xoopsDB->fetchRow($result);
 
         if ($length > 100) {
-            $alter = "ALTER TABLE `{$table}`
-                CHANGE `col_name` `col_name` VARCHAR(100)
-                NOT NULL DEFAULT ''
-                COMMENT '欄位名稱' AFTER `files_sn`";
+            $alter = "ALTER TABLE `{$table}` CHANGE `col_name` `col_name` VARCHAR(100) NOT NULL DEFAULT '' COMMENT '欄位名稱' AFTER `files_sn`"; // xoops-lint-ignore：DB 欄位註解，非介面字串
             if (!$xoopsDB->queryF($alter)) {
                 return false;
             }
@@ -125,7 +122,7 @@ class Update
     public static function go_dc_sort()
     {
         global $xoopsDB;
-        $sql = 'ALTER TABLE ' . $xoopsDB->prefix('tadnews_data_center') . " ADD `sort` mediumint(9) unsigned COMMENT '顯示順序' after `col_id`";
+        $sql = 'ALTER TABLE ' . $xoopsDB->prefix('tadnews_data_center') . " ADD `sort` mediumint(9) unsigned COMMENT '顯示順序' after `col_id`"; // xoops-lint-ignore：DB 欄位註解，非介面字串
         $xoopsDB->queryF($sql) or redirect_header(XOOPS_URL . '/modules/tadnews/admin/index.php', 30, $xoopsDB->error());
     }
     //新增檔案欄位
@@ -144,11 +141,7 @@ class Update
     public static function go_fc_tag()
     {
         global $xoopsDB;
-        $sql = 'ALTER TABLE ' . $xoopsDB->prefix('tadnews_files_center') . "
-        ADD `upload_date` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '上傳時間',
-        ADD `uid` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT 0 COMMENT '上傳者',
-        ADD `tag` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '註記'
-        ";
+        $sql = 'ALTER TABLE ' . $xoopsDB->prefix('tadnews_files_center') . " ADD `upload_date` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '上傳時間', ADD `uid` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT 0 COMMENT '上傳者', ADD `tag` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '註記'"; // xoops-lint-ignore：DB 欄位註解，非介面字串
         $xoopsDB->queryF($sql) or redirect_header(XOOPS_URL . '/modules/system/admin.php?fct=modulesadmin', 30, $xoopsDB->error());
     }
 

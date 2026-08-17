@@ -21,6 +21,8 @@ class Tag
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
         $i                = 0;
+        $tagarr           = [];
+        $tag              = $font_color = $color = $enable = '';
         $tags_used_amount = self::tags_used_amount();
         while (list($tag_sn, $tag, $font_color, $color, $enable) = $xoopsDB->fetchRow($result)) {
             $tag_amount = isset($tags_used_amount[$tag_sn]) ? (int) $tags_used_amount[$tag_sn] : 0;
@@ -45,6 +47,8 @@ class Tag
         $xoopsTpl->assign('tag', $tag);
         $xoopsTpl->assign('font_color', $font_color);
         $xoopsTpl->assign('color', $color);
+        //新標籤列的「是否使用」預設值，樣板 tadnews_adm_tag.tpl 需要（官方版漏 assign）
+        $xoopsTpl->assign('enable', $enable);
         $xoopsTpl->assign('XOOPS_TOKEN', Utility::token_form('return'));
         $MColorPicker = new MColorPicker('.color-picker');
         $MColorPicker->render('bootstrap');

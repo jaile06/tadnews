@@ -61,6 +61,11 @@ class Page
         }
         $xoopsTpl->assign('link_cate_sn_arr', $link_cate_sn_arr);
         $xoopsTpl->assign('ok_cat', Tools::chk_user_cate_power('post'));
+
+        //工具列：單一分類看該分類設定（tool=0 才隱藏），列表全部分類時預設顯示
+        $cate  = $Tadnews->get_tad_news_cate($the_ncsn);
+        $setup = isset($cate['setup']) ? $cate['setup'] : '';
+        $xoopsTpl->assign('cate_set_tool', false === mb_strpos($setup, 'tool=0'));
     }
 
     public static function add_to_menu($ncsn = '')
