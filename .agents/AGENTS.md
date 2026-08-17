@@ -68,6 +68,7 @@
 | `class/Cate.php` `list_tad_news()` | `ncsn` 沒選分類時 assign `''` 而非 `0` | 樣板一律用 `$ncsn!=""` 判斷有無選分類，PHP 8 起 `0 != ""` 為真 → 後台文章／自訂頁面管理未選分類時仍跑進分類標題區塊，噴 `$cate` 缺 key 的 Warning 並出現破圖 |
 | `admin/main.php` | 補 assign `now_op`（比照 `admin/page.php`） | 樣板三處用 `$now_op` 判斷，官方只在 `admin/page.php` assign，`admin/main.php` 漏掉 |
 | `class/Tag.php` `list_tad_news_tags()` | 補 assign `enable`，並初始化 `$tagarr` 等區域變數 | 樣板「新標籤」列用 `$enable` 決定預設選項，官方（含 5.02 的 `admin/tag.php`）從沒 assign → PHP 8 每次進標籤管理都噴 4 條 Warning |
+| 安全修補（Phase 0/1/2） | 刪 `save.php`；`demo_upload.php` 補權限；`get_news()` keyword 跳脫；`insert/update_tad_news()` 啟用 token 檢查；`post.php` 的 `del_page_tab`／`delete_cover` 補擁有者檢查；`uid_chk` 預設改 1 | 官方 5.02 皆無這些防護，詳見 commit `807ff62`／`76081c8`／Phase 2。**升級後務必重套，這幾項是可被未授權觸發的漏洞** |
 | `class/TadNewsRest.php` + `app_api.php` | 修好 `get_cates()` 被截斷的 `$nc_title`、還原被註解掉的 `use ...\Utility`、`app_api.php` 補註冊自身 autoloader、關閉 `$xoopsLogger` | 官方 5.02 的 `TadNewsRest.php` **整檔 parse error**（變數名被換行切成 `$nc_titl` + `e`），且 `app_api.php` 只 require mainfile 不載入 autoloader → App API 任何 op 都是白畫面。另外站台開除錯模式時 logger 的 HTML 會黏在 JSON 後面害 App 端解析失敗，於入口關掉。實測 `?op=get_cates` 回傳純 JSON、`json_decode` 通過 |
 | `blocks/tadnews_cate.php:38` | `$counter[$ncsn]` 改用 `empty()` 判斷 | 零文章的分類不在 `GROUP BY ncsn` 結果中，官方直接讀該 key → PHP 8 每個空分類噴一條 `Undefined array key` |
 | `my_news.php` `list_tad_my_news()` | 改收 `$kind, $the_ncsn` 參數，刪掉函式內重複的 toolbar assign | 官方在函式內用未定義的 `$kind`／`$the_ncsn`／`$interface_icon`（三個都不在 `global` 清單）→ PHP 8 兩條 Warning，且分類篩選功能實際失效 |

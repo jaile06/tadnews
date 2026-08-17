@@ -285,5 +285,5 @@ $modversion['config'] = [
     ['name' => 'show_next_btn', 'title' => '_MI_SHOW_NEXT_BTN', 'description' => '_MI_SHOW_NEXT_BTN_DESC', 'formtype' => 'yesno', 'valuetype' => 'int', 'default' => 0],
     ['name' => 'show_rss', 'title' => '_MI_SHOW_RSS', 'description' => '_MI_SHOW_RSS_DESC', 'formtype' => 'yesno', 'valuetype' => 'int', 'default' => 0],
     ['name' => 'use_table_shadow', 'title' => '_MI_USE_TABLE_SHADOW', 'description' => '_MI_USE_TABLE_SHADOW_DESC', 'formtype' => 'yesno', 'valuetype' => 'int', 'default' => 1],
-    ['name' => 'uid_chk', 'title' => '_MI_UPDATE_UID_CHK', 'description' => '_MI_UPDATE_UID_CHK_DESC', 'formtype' => 'yesno', 'valuetype' => 'int', 'default' => 0],
+    ['name' => 'uid_chk', 'title' => '_MI_UPDATE_UID_CHK', 'description' => '_MI_UPDATE_UID_CHK_DESC', 'formtype' => 'yesno', 'valuetype' => 'int', 'default' => 1],
 ];

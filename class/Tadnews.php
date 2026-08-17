@@ -2149,11 +2149,10 @@ class Tadnews
     {
         global $xoopsDB, $xoopsUser, $xoopsModuleConfig;
 
-        //安全判斷
-        // if ($_SERVER['SERVER_ADDR'] != '127.0.0.1' && !$GLOBALS['xoopsSecurity']->check()) {
-        //     $error = implode('<br>', $GLOBALS['xoopsSecurity']->getErrors());
-        //     redirect_header('index.php', 3, $error);
-        // }
+        //安全判斷（表單的 token 由 tad_news_form() 以 Utility::token_form() 產生）
+        if (!$GLOBALS['xoopsSecurity']->check()) {
+            redirect_header('index.php', 3, implode('<br>', (Array) $GLOBALS['xoopsSecurity']->getErrors()));
+        }
 
         if (empty($_POST['enable_group']) or in_array('', $_POST['enable_group'])) {
             $enable_group = '';
@@ -2300,11 +2299,8 @@ class Tadnews
     private function creat_tad_news_cate($of_ncsn = '', $new_cate = '', $not_news = '0')
     {
         global $xoopsDB;
-        //安全判斷
-        // if ($_SERVER['SERVER_ADDR'] != '127.0.0.1' && !$GLOBALS['xoopsSecurity']->check()) {
-        //     $error = implode("<br>", $GLOBALS['xoopsSecurity']->getErrors());
-        //     redirect_header("index.php", 3, $error);
-        // }
+        //本方法為 private，token 已由呼叫端 insert_tad_news() / update_tad_news() 檢查過，
+        //不可在此再 check() 一次：XoopsSecurity::check() 驗證後預設會清掉 token，第二次必失敗
         $enable_group = $enable_post_group = $setup = $cate = '';
         if (!empty($of_ncsn)) {
             $cate              = $this->get_tad_news_cate($of_ncsn);
@@ -2391,6 +2387,11 @@ class Tadnews
     public function update_tad_news($nsn = '')
     {
         global $xoopsDB, $xoopsModuleConfig;
+
+        //安全判斷（表單的 token 由 tad_news_form() 以 Utility::token_form() 產生）
+        if (!$GLOBALS['xoopsSecurity']->check()) {
+            redirect_header('index.php', 3, implode('<br>', (Array) $GLOBALS['xoopsSecurity']->getErrors()));
+        }
 
         //確認有管理員或本人才能管理
         $news = $this->get_tad_news($nsn, $xoopsModuleConfig['uid_chk']);
