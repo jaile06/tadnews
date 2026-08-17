@@ -322,6 +322,12 @@ class Cate
         $cate_pic          = (!isset($DBV['cate_pic'])) ? '' : $DBV['cate_pic'];
         $pic               = (empty($cate_pic)) ? '../images/no_cover.png' : XOOPS_URL . "/uploads/tadnews/cate/{$cate_pic}";
         $setup             = (!isset($DBV['setup'])) ? '' : $DBV['setup'];
+        //setup 各項的預設值：新分類的 setup 是空的，樣板卻直接讀這些變數會噴 Undefined array key。
+        //一律給空字串，與原本「變數未定義」時的判斷結果相同（'' != '0' 為真、'' == '1' 為假），畫面不變
+        foreach (['only_title', 'title', 'tool', 'nav', 'breadcrumbs'] as $set_key) {
+            $xoopsTpl->assign($set_key, '');
+        }
+
         $setup_arr         = explode(';', $setup);
         foreach ($setup_arr as $set) {
             //新分類或舊資料的 setup 可能是空字串或缺少 '='，直接 list() 會噴 Undefined array key 1
