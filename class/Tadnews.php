@@ -681,7 +681,11 @@ class Tadnews
 
         //判斷是否有關鍵字
         if (!empty($this->keyword)) {
-            $and_keyword = "and (`news_title` like '%{$this->keyword}%' or `news_content` like '%{$this->keyword}%')";
+            //keyword 來自使用者輸入（ajax_list_content.php / ajax_table_content.php），且本查詢後續要交給
+            //Utility::getPageBar() 以字串形式再跑一次，無法用預處理，故在此逐層跳脫：
+            //先 escape 引號與反斜線防注入，再跳脫 LIKE 的萬用字元 % 與 _
+            $keyword     = addcslashes($xoopsDB->escape($this->keyword), '%_');
+            $and_keyword = "and (`news_title` like '%{$keyword}%' or `news_content` like '%{$keyword}%')";
         } else {
             $and_keyword = '';
         }
