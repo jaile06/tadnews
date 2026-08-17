@@ -324,7 +324,11 @@ class Cate
         $setup             = (!isset($DBV['setup'])) ? '' : $DBV['setup'];
         $setup_arr         = explode(';', $setup);
         foreach ($setup_arr as $set) {
-            list($set_name, $set_val) = explode('=', $set);
+            //新分類或舊資料的 setup 可能是空字串或缺少 '='，直接 list() 會噴 Undefined array key 1
+            if (false === mb_strpos($set, '=')) {
+                continue;
+            }
+            list($set_name, $set_val) = explode('=', $set, 2);
             $xoopsTpl->assign($set_name, $set_val);
         }
 

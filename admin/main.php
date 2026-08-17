@@ -15,6 +15,10 @@ $show_uid = Request::getInt('show_uid');
 $to_ncsn  = Request::getInt('to_ncsn');
 $not_news = Request::getInt('not_news');
 
+//先給預設值，Cate::tad_news_cate_form() 會在 switch 中覆寫成 tad_news_cate_form，
+//故不可放到 switch 之後，否則分類表單會被蓋掉而不顯示
+$xoopsTpl->assign('now_op', $op);
+
 switch ($op) {
     //刪除資料
     case 'delete_tad_news':
@@ -76,6 +80,5 @@ switch ($op) {
 }
 
 /*-----------秀出結果區--------------*/
-$xoopsTpl->assign('now_op', $op);
 $xoopsTpl->assign('cate_img_url', XOOPS_URL . '/uploads/tadnews/cate');
 require_once __DIR__ . '/footer.php';
