@@ -24,6 +24,8 @@ $modversion['author_website_name'] = 'Tad';
 $modversion['min_php']             = '7.3';
 $modversion['min_xoops']           = '2.5.10';
 $modversion['min_db']              = ['mysql' => '5.0.7', 'mysqli' => '5.0.7'];
+// 依賴模組：tadtools（必要）、tad_base（必要，後台新聞編輯器用 Tad_base\CkEditor5；
+// 未安裝時前台照常顯示，但開啟新聞編輯頁會出錯）
 
 //---paypal資訊---//
 $modversion['paypal'] = [

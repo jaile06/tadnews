@@ -42,6 +42,10 @@ function tadnews_list_content_block_show($options)
     }
 
     $xoTheme->addScript('modules/tadtools/My97DatePicker/WdatePicker.js');
+    // 內文由 ajax_list_content.php 載入，CK5 內容樣式要在頁面先載好
+    if (class_exists('XoopsModules\Tad_base\CkEditor5')) {
+        \XoopsModules\Tad_base\CkEditor5::loadContentCss();
+    }
     return $block;
 }
 

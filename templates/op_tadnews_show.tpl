@@ -33,7 +33,7 @@
                     </div>
                     <div style="margin: 30px;">
                         <{$news.pic}>
-                        <{$news.content}>
+                        <div class="ck-content"><{$news.content}></div>
                     </div>
 
                     <div style="clear:both;"></div>

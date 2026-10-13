@@ -14,7 +14,7 @@
                         <a href="<{$xoops_url}>/modules/tadnews/index.php?nsn=<{$news.nsn}>"><{$news.news_title}></a>
                     </h4>
                     <div style="<{$block.summary_css}>">
-                        <{$news.content}>
+                        <div class="ck-content"><{$news.content}></div>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                         <a href="<{$xoops_url}>/modules/tadnews/index.php?nsn=<{$news.nsn}>"><{$news.news_title}></a>
                     </h5>
                     <div style="<{$block.summary_css}>">
-                        <{$news.content}>
+                        <div class="ck-content"><{$news.content}></div>
                     </div>
                 </div>
             <{/foreach}>

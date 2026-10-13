@@ -27,7 +27,7 @@
                 <h2 class="sr-only visually-hidden"><{$news.news_title}></h2>
             <{/if}>
 
-            <div style="margin:10px auto; line-height: 2rem; font-weight:normal;"><{$news.pic}><{$news.content}></div>
+            <div style="margin:10px auto; line-height: 2rem; font-weight:normal;"><{$news.pic}><div class="ck-content"><{$news.content}></div></div>
 
             <{$news.files}>
 

@@ -2,7 +2,7 @@
 namespace XoopsModules\Tadnews;
 
 use XoopsModules\Tadnews\Tools;
-use XoopsModules\Tadtools\CkEditor;
+use XoopsModules\Tad_base\CkEditor5 as CkEditor;
 use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\StarRating;
 use XoopsModules\Tadtools\SweetAlert;
@@ -422,6 +422,10 @@ class Tadnews
         global $xoopsDB, $xoopsTpl, $xoTheme, $tadnews_adm;
         if ($admin) {
             $tadnews_adm = $admin;
+        }
+        // CK5 內容的圖片對齊、縮放、圖說樣式（樣板外層需有 .ck-content）
+        if (class_exists(CkEditor::class)) {
+            CkEditor::loadContentCss();
         }
 
         $rating_js = '';

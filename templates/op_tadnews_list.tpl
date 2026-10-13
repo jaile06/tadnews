@@ -21,7 +21,7 @@
                         <{$news.today_pic}>
                         <a href="<{$xoops_url}>/modules/tadnews/<{$news.link_page}>?nsn=<{$news.nsn}>"><{$news.news_title}></a>
                         <span style="color:gray;font-size: 0.8rem;"> (<a href="index.php?show_uid=<{$news.uid}>"><{$news.uid_name}></a> / <{$news.counter}> / <a href="index.php?ncsn=<{$news.ncsn}>"><{$news.cate_name}></a>)</span>
-                        <{$news.content}>
+                        <div class="ck-content"><{$news.content}></div>
                     </td>
                 </tr>
             <{/foreach}>

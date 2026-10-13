@@ -30,7 +30,7 @@
 
         <div style="margin: 30px;">
             <{$data.pic}>
-            <{$data.content}>
+            <div class="ck-content"><{$data.content}></div>
         </div>
         <div style="clear:both;"></div>
     </div>
