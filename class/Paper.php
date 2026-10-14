@@ -3,7 +3,7 @@
 namespace XoopsModules\Tadnews;
 
 use XoopsModules\Tadtools\CkEditor;
-use XoopsModules\Tadtools\SweetAlert;
+use XoopsModules\Tadtools\SweetAlert2;
 use XoopsModules\Tadtools\Tmt;
 use XoopsModules\Tadtools\Utility;
 
@@ -41,11 +41,14 @@ class Paper
 
         $total = $xoopsDB->getRowsNum($result);
 
-        $SweetAlert = new SweetAlert();
-        $SweetAlert->render("delete_tad_newspaper_set", "{$_SERVER['PHP_SELF']}?op=del_newspaper_set&nps_sn={$sel_nps_sn}", '');
+        $SweetAlert2 = new SweetAlert2();
+        $SweetAlert2->setVar('method', 'post');
+        $XOOPS_TOKEN_REQUEST = $GLOBALS['xoopsSecurity']->createToken();
+        $SweetAlert2->render("delete_tad_newspaper_set", "{$_SERVER['PHP_SELF']}?op=del_newspaper_set&XOOPS_TOKEN_REQUEST={$XOOPS_TOKEN_REQUEST}&nps_sn={$sel_nps_sn}", '');
 
-        $SweetAlert2 = new SweetAlert();
-        $SweetAlert2->render("delete_tad_newspaper", "{$_SERVER['PHP_SELF']}?op=del_newspaper&npsn=", 'npsn');
+        $SweetAlert22 = new SweetAlert2();
+        $SweetAlert22->setVar('method', 'post');
+        $SweetAlert22->render("delete_tad_newspaper", "{$_SERVER['PHP_SELF']}?op=del_newspaper&XOOPS_TOKEN_REQUEST={$XOOPS_TOKEN_REQUEST}&npsn=", 'npsn');
 
         //刪除按鈕
         $del_btn = '';
@@ -155,11 +158,7 @@ class Paper
     public static function save_newspaper_set($nps_sn = '')
     {
         global $xoopsDB;
-        //安全判斷
-        if ($_SERVER['SERVER_ADDR'] != '127.0.0.1' && !$GLOBALS['xoopsSecurity']->check()) {
-            $error = implode('<br>', (Array) $GLOBALS['xoopsSecurity']->getErrors());
-            redirect_header('index.php', 3, $error);
-        }
+        Utility::xoops_security_check('', '', 'index.php');
 
         $title  = (string) $_POST['title'];
         $head   = (string) $_POST['head'];
@@ -230,11 +229,7 @@ class Paper
     public static function save_newspaper()
     {
         global $xoopsDB;
-        //安全判斷
-        if ($_SERVER['SERVER_ADDR'] != '127.0.0.1' && !$GLOBALS['xoopsSecurity']->check()) {
-            $error = implode('<br>', (Array) $GLOBALS['xoopsSecurity']->getErrors());
-            redirect_header('index.php', 3, $error);
-        }
+        Utility::xoops_security_check('', '', 'index.php');
         $all_news = mb_substr($_POST['all_news'], 1);
 
         $now = date('Y-m-d H:i:s', xoops_getUserTimestamp(time()));
@@ -373,8 +368,10 @@ class Paper
         $xoopsTpl->assign('nps_sn', $newspaper['nps_sn']);
         $xoopsTpl->assign('XOOPS_TOKEN', Utility::token_form('return'));
 
-        $SweetAlert = new SweetAlert();
-        $SweetAlert->render('delete_tad_news_email_func', "newspaper.php?op=delete_tad_news_email_npsn&npsn={$npsn}&nps_sn={$newspaper['nps_sn']}&email=", 'email');
+        $SweetAlert2         = new SweetAlert2();
+        $XOOPS_TOKEN_REQUEST = $GLOBALS['xoopsSecurity']->createToken();
+        $SweetAlert2->setVar('method', 'post');
+        $SweetAlert2->render('delete_tad_news_email_func', "newspaper.php?op=delete_tad_news_email_npsn&XOOPS_TOKEN_REQUEST={$XOOPS_TOKEN_REQUEST}&npsn={$npsn}&nps_sn={$newspaper['nps_sn']}&email=", 'email');
     }
 
     //立即寄出
@@ -696,16 +693,16 @@ class Paper
 
         //Utility::getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
         $PageBar = Utility::getPageBar($sql, 10, 10);
-        $bar = $PageBar['bar'];
-        $sql = $PageBar['sql'];
+        $bar     = $PageBar['bar'];
+        $sql     = $PageBar['sql'];
 
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
-        $i = 0;
-        $main = [];
+        $i      = 0;
+        $main   = [];
         while (list($allnpsn, $number, $title, $np_date) = $xoopsDB->fetchRow($result)) {
-            $title = $myts->htmlSpecialChars($title);
+            $title               = $myts->htmlSpecialChars($title);
             $main[$i]['allnpsn'] = $allnpsn;
-            $main[$i]['title'] = $title . sprintf(_MD_TADNEWS_NP_TITLE, $number);
+            $main[$i]['title']   = $title . sprintf(_MD_TADNEWS_NP_TITLE, $number);
             $main[$i]['np_date'] = $np_date;
             $i++;
         }

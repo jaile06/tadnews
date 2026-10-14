@@ -24,6 +24,7 @@ switch ($op) {
 
     //刪除電子報設定組
     case 'del_newspaper_set':
+        Utility::xoops_security_check();
         Paper::del_newspaper_set($nps_sn);
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
@@ -48,6 +49,7 @@ switch ($op) {
 
     //刪除電子報
     case 'del_newspaper':
+        Utility::xoops_security_check();
         Paper::del_newspaper($npsn);
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
@@ -83,6 +85,7 @@ switch ($op) {
 
     //刪除電子郵件
     case 'delete_tad_news_email_npsn':
+        Utility::xoops_security_check();
         Paper::delete_tad_news_email($mail, $nps_sn);
         header("location: {$_SERVER['PHP_SELF']}?op=sendmail&npsn=$npsn");
         exit;
@@ -110,4 +113,3 @@ if ('preview' === $op) {
 } else {
     require_once __DIR__ . '/footer.php';
 }
-

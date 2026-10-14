@@ -10,14 +10,14 @@ require_once __DIR__ . '/header.php';
 require_once XOOPS_ROOT_PATH . '/header.php';
 
 /*-----------執行動作判斷區----------*/
-$op = Request::getString('op');
-$kind = Request::getString('kind');
-$ncsn = Request::getInt('ncsn');
-$nsn = Request::getInt('nsn');
-$fsn = Request::getInt('fsn');
-$uid = Request::getInt('uid');
+$op       = Request::getString('op');
+$kind     = Request::getString('kind');
+$ncsn     = Request::getInt('ncsn');
+$nsn      = Request::getInt('nsn');
+$fsn      = Request::getInt('fsn');
+$uid      = Request::getInt('uid');
 $files_sn = Request::getInt('files_sn');
-$tag_sn = Request::getInt('tag_sn');
+$tag_sn   = Request::getInt('tag_sn');
 
 switch ($op) {
     //下載檔案
@@ -28,6 +28,7 @@ switch ($op) {
 
     //刪除資料
     case 'delete_tad_news':
+        Utility::xoops_security_check();
         $Tadnews->delete_tad_news($nsn);
         header('location: ' . $_SERVER['PHP_SELF']);
         exit;

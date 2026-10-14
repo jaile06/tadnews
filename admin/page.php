@@ -1,6 +1,6 @@
 <?php
-use XoopsModules\Tadnews\Cate;
 use Xmf\Request;
+use XoopsModules\Tadnews\Cate;
 use XoopsModules\Tadtools\Utility;
 
 /*-----------引入檔案區--------------*/
@@ -19,6 +19,7 @@ $not_news = Request::getInt('not_news', 1);
 switch ($op) {
     //刪除資料
     case 'delete_tad_news':
+        Utility::xoops_security_check();
         $Tadnews->delete_tad_news($nsn);
         header('location: ' . $_SERVER['PHP_SELF']);
         exit;
@@ -52,6 +53,7 @@ switch ($op) {
 
     //刪除資料
     case 'delete_tad_news_cate':
+        Utility::xoops_security_check();
         Cate::delete_tad_news_cate($ncsn);
         header('location: ' . $_SERVER['PHP_SELF']);
         exit;

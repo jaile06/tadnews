@@ -35,6 +35,7 @@ switch ($op) {
 
     //刪除資料
     case 'delete_tad_news':
+        Utility::xoops_security_check();
         $Tadnews->delete_tad_news($nsn);
         header('location: ' . $_SERVER['PHP_SELF']);
         exit;
@@ -192,4 +193,3 @@ function show_news($nsn = '')
     $xoopsTpl->assign('show_next_btn', $xoopsModuleConfig['show_next_btn']);
 
 }
-

@@ -117,7 +117,7 @@ class Page
     {
         global $xoopsDB;
 
-        $sort               = 1;
+        $sort = 1;
         foreach ($updateRecordsArray as $data_sort) {
             $data_sort = (int) $data_sort;
             $sql       = 'UPDATE `' . $xoopsDB->prefix('tadnews_data_center') . '`
@@ -190,7 +190,6 @@ class Page
     public static function save_page_sort(array $updateRecordsArray = [])
     {
         global $xoopsDB;
-
 
         $sort = 1;
         foreach ($updateRecordsArray as $nsn) {

@@ -3,7 +3,7 @@
 namespace XoopsModules\Tadnews;
 
 use XoopsModules\Tadtools\MColorPicker;
-use XoopsModules\Tadtools\SweetAlert;
+use XoopsModules\Tadtools\SweetAlert2;
 use XoopsModules\Tadtools\Utility;
 
 /**
@@ -22,7 +22,7 @@ class Tag
 
         $i                = 0;
         $tagarr           = [];
-        $tag              = $font_color = $color = $enable = '';
+        $tag              = $font_color              = $color              = $enable              = '';
         $tags_used_amount = self::tags_used_amount();
         while (list($tag_sn, $tag, $font_color, $color, $enable) = $xoopsDB->fetchRow($result)) {
             $tag_amount = isset($tags_used_amount[$tag_sn]) ? (int) $tags_used_amount[$tag_sn] : 0;
@@ -53,18 +53,16 @@ class Tag
         $MColorPicker = new MColorPicker('.color-picker');
         $MColorPicker->render('bootstrap');
 
-        $SweetAlert = new SweetAlert();
-        $SweetAlert->render('delete_tag', 'tag.php?op=del_tag&tag_sn=', 'tag_sn');
+        $SweetAlert2         = new SweetAlert2();
+        $XOOPS_TOKEN_REQUEST = $GLOBALS['xoopsSecurity']->createToken();
+        $SweetAlert2->setVar('method', 'post');
+        $SweetAlert2->render('delete_tag', 'tag.php?op=del_tag&XOOPS_TOKEN_REQUEST={$XOOPS_TOKEN_REQUEST}&tag_sn=', 'tag_sn');
     }
 
     public static function insert_tad_news_tags()
     {
         global $xoopsDB;
-        //安全判斷
-        if ($_SERVER['SERVER_ADDR'] != '127.0.0.1' && !$GLOBALS['xoopsSecurity']->check()) {
-            $error = implode('<br>', (Array) $GLOBALS['xoopsSecurity']->getErrors());
-            redirect_header('index.php', 3, $error);
-        }
+        Utility::xoops_security_check('', '', 'index.php');
 
         $sql = 'INSERT INTO `' . $xoopsDB->prefix('tad_news_tags') . '` (`tag`, `font_color`, `color`, `enable`) VALUES (?, ?, ?, ?)';
         Utility::query($sql, 'ssss', [$_POST['tag'], $_POST['font_color'], $_POST['color'], $_POST['enable']]) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -91,7 +89,6 @@ class Tag
     public static function del_tag($tag_sn = '')
     {
         global $xoopsDB;
-
         $sql = 'DELETE FROM `' . $xoopsDB->prefix('tad_news_tags') . '` WHERE `tag_sn`=?';
         Utility::query($sql, 'i', [$tag_sn]) or Utility::web_error($sql, __FILE__, __LINE__);
 

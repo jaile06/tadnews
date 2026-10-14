@@ -1,6 +1,6 @@
 <?php
-use XoopsModules\Tadnews\Cate;
 use Xmf\Request;
+use XoopsModules\Tadnews\Cate;
 use XoopsModules\Tadtools\Utility;
 /*-----------引入檔案區--------------*/
 $GLOBALS['xoopsOption']['template_main'] = 'tadnews_adm_main.tpl';
@@ -22,6 +22,7 @@ $xoopsTpl->assign('now_op', $op);
 switch ($op) {
     //刪除資料
     case 'delete_tad_news':
+        Utility::xoops_security_check();
         $Tadnews->delete_tad_news($nsn);
         header('location: ' . $_SERVER['PHP_SELF']);
         exit;
@@ -54,6 +55,7 @@ switch ($op) {
 
     //刪除資料
     case 'delete_tad_news_cate':
+        Utility::xoops_security_check();
         Cate::delete_tad_news_cate($ncsn);
         header('location: ' . $_SERVER['PHP_SELF']);
         exit;

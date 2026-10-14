@@ -11,8 +11,8 @@ if (empty($xoopsUser)) {
 }
 
 /*-----------執行動作判斷區----------*/
-$op = Request::getString('op');
-$nsn = Request::getInt('nsn');
+$op   = Request::getString('op');
+$nsn  = Request::getInt('nsn');
 $ncsn = Request::getInt('ncsn');
 $sort = Request::getInt('sort');
 
@@ -29,6 +29,7 @@ switch ($op) {
 
     //更新資料
     case 'update_tad_news':
+        Utility::xoops_security_check('', '', 'index.php');
         $Tadnews->update_tad_news($nsn);
         break;
 
@@ -39,6 +40,7 @@ switch ($op) {
 
     //刪除頁籤
     case 'del_page_tab':
+        Utility::xoops_security_check();
         //確認是本人或管理員，否則帶任意 nsn 就能刪掉別人文章的頁籤
         $Tadnews->get_tad_news($nsn, true);
         $Tadnews->del_page_tab($nsn, $sort);

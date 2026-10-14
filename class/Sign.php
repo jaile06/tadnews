@@ -13,18 +13,13 @@ class Sign
     //已經讀過
     public static function have_read($nsn = '', $uid = '')
     {
-        global $xoopsDB, $xoopsUser;
-        //安全判斷
-        if ($_SERVER['SERVER_ADDR'] != '127.0.0.1' && !$GLOBALS['xoopsSecurity']->check()) {
-            $error = implode('<br>', (Array) $GLOBALS['xoopsSecurity']->getErrors());
-            redirect_header('index.php', 3, $error);
-        }
+        global $xoopsDB;
+        Utility::xoops_security_check('', '', 'index.php');
         $now = date('Y-m-d H:i:s', xoops_getUserTimestamp(time()));
         $sql = 'INSERT INTO `' . $xoopsDB->prefix('tad_news_sign') . '` (`nsn`, `uid`, `sign_time`) VALUES (?, ?, ?)';
         Utility::query($sql, 'iis', [$nsn, $uid, $now]) or Utility::web_error($sql, __FILE__, __LINE__);
 
     }
-
 
     //列出簽收狀況
     public static function list_sign($nsn = '')

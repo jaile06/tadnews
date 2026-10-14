@@ -3,7 +3,7 @@
 namespace XoopsModules\Tadnews;
 
 use XoopsModules\Tadtools\CategoryHelper;
-use XoopsModules\Tadtools\SweetAlert;
+use XoopsModules\Tadtools\SweetAlert2;
 use XoopsModules\Tadtools\Utility;
 use XoopsModules\Tadtools\Ztree;
 
@@ -55,8 +55,10 @@ class Cate
         $cate = $Tadnews->get_tad_news_cate($the_ncsn);
         $xoopsTpl->assign('cate', $cate);
 
-        $SweetAlert = new SweetAlert();
-        $SweetAlert->render('delete_tad_news_cate_func', "{$page}?op=delete_tad_news_cate&ncsn=", 'ncsn');
+        $SweetAlert2         = new SweetAlert2();
+        $XOOPS_TOKEN_REQUEST = $GLOBALS['xoopsSecurity']->createToken();
+        $SweetAlert2->setVar('method', 'post');
+        $SweetAlert2->render('delete_tad_news_cate_func', "{$page}?op=delete_tad_news_cate&XOOPS_TOKEN_REQUEST={$XOOPS_TOKEN_REQUEST}&ncsn=", 'ncsn');
     }
 
     //列出所有tad_news_cate資料
@@ -152,11 +154,7 @@ class Cate
     public static function insert_tad_news_cate()
     {
         global $xoopsDB, $xoopsModuleConfig;
-        //安全判斷
-        if ($_SERVER['SERVER_ADDR'] != '127.0.0.1' && !$GLOBALS['xoopsSecurity']->check()) {
-            $error = implode('<br>', (Array) $GLOBALS['xoopsSecurity']->getErrors());
-            redirect_header('index.php', 3, $error);
-        }
+        Utility::xoops_security_check('', '', 'index.php');
         if (empty($_POST['enable_group']) or in_array('', $_POST['enable_group'])) {
             $enable_group = '';
         } else {
@@ -328,7 +326,7 @@ class Cate
             $xoopsTpl->assign($set_key, '');
         }
 
-        $setup_arr         = explode(';', $setup);
+        $setup_arr = explode(';', $setup);
         foreach ($setup_arr as $set) {
             //新分類或舊資料的 setup 可能是空字串或缺少 '='，直接 list() 會噴 Undefined array key 1
             if (false === mb_strpos($set, '=')) {
@@ -460,12 +458,8 @@ class Cate
     //新增資料到tad_news_cate中
     public static function add_tad_news_cate($title = '', $no_news = '0')
     {
-        global $xoopsDB, $xoopsModuleConfig;
-        //安全判斷
-        if ($_SERVER['SERVER_ADDR'] != '127.0.0.1' && !$GLOBALS['xoopsSecurity']->check()) {
-            $error = implode('<br>', (Array) $GLOBALS['xoopsSecurity']->getErrors());
-            redirect_header('index.php', 3, $error);
-        }
+        global $xoopsDB;
+        Utility::xoops_security_check('', '', 'index.php');
         $enable_group = $enable_post_group = $setup = '';
         $sql          = 'SELECT MAX(`sort`) FROM `' . $xoopsDB->prefix('tad_news_cate') . '` WHERE `of_ncsn`=?';
         $result       = Utility::query($sql, 's', ['']) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -487,7 +481,7 @@ class Cate
     {
         global $xoopsDB;
         //抓出子目錄的編號
-        $sql = 'SELECT `ncsn` FROM `' . $xoopsDB->prefix('tad_news_cate') . '` WHERE `of_ncsn` = ?';
+        $sql    = 'SELECT `ncsn` FROM `' . $xoopsDB->prefix('tad_news_cate') . '` WHERE `of_ncsn` = ?';
         $result = Utility::query($sql, 'i', [$ncsn]) or Utility::web_error($sql, __FILE__, __LINE__);
 
         while (list($sub_ncsn) = $xoopsDB->fetchRow($result)) {

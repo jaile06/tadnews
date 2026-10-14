@@ -32,6 +32,7 @@ switch ($op) {
 
     //刪除資料
     case 'del_tag':
+        Utility::xoops_security_check();
         Tag::del_tag($tag_sn);
         header('location: ' . $_SERVER['PHP_SELF']);
         exit;

@@ -28,6 +28,7 @@ switch ($op) {
 
     //刪除資料
     case 'delete_tad_news':
+        Utility::xoops_security_check();
         $Tadnews->delete_tad_news($nsn);
         header('location: ' . $_SERVER['PHP_SELF']);
         exit;
@@ -81,4 +82,3 @@ if ($xoopsModuleConfig['use_table_shadow']) {
 }
 $xoTheme->addStylesheet('modules/tadtools/css/iconize.css');
 require_once XOOPS_ROOT_PATH . '/footer.php';
-

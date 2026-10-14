@@ -5,7 +5,7 @@ use XoopsModules\Tadnews\Tools;
 use XoopsModules\Tad_base\CkEditor5 as CkEditor;
 use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\StarRating;
-use XoopsModules\Tadtools\SweetAlert;
+use XoopsModules\Tadtools\SweetAlert2;
 use XoopsModules\Tadtools\TadDataCenter;
 use XoopsModules\Tadtools\TadUpFiles;
 use XoopsModules\Tadtools\Utility;
@@ -1340,8 +1340,10 @@ class Tadnews
     private function del_js()
     {
 
-        $SweetAlert = new SweetAlert();
-        $SweetAlert->render('delete_tad_news_func', "{$_SERVER['PHP_SELF']}?op=delete_tad_news&nsn=", 'nsn');
+        $SweetAlert2         = new SweetAlert2();
+        $XOOPS_TOKEN_REQUEST = $GLOBALS['xoopsSecurity']->createToken();
+        $SweetAlert2->setVar('method', 'post');
+        $SweetAlert2->render('delete_tad_news_func', "{$_SERVER['PHP_SELF']}?op=delete_tad_news&XOOPS_TOKEN_REQUEST={$XOOPS_TOKEN_REQUEST}&nsn=", 'nsn');
     }
 
     //列出所有作者的下拉選單
@@ -1766,15 +1768,17 @@ class Tadnews
 
         $xoTheme->addScript('modules/tadtools/jqueryCookie/jquery.cookie.js');
         $xoTheme->addScript('modules/tadtools/My97DatePicker/WdatePicker.js');
-        $xoTheme->addScript('modules/tadnews/class/jquery.upload-1.0.2.min.js');
+        $xoTheme->addScript('modules/tadtools/jquery/jquery.upload.min.js');
         $myts = \MyTextSanitizer::getInstance();
         $xoopsTpl->assign('now_uid', $xoopsUser->uid());
 
         $FormValidator = new FormValidator('#myForm', false);
         $FormValidator->render('topLeft');
 
-        $SweetAlert = new SweetAlert();
-        $SweetAlert->render('del_page_tab', "post.php?op=del_page_tab&nsn=$nsn&sort=", 'sort');
+        $SweetAlert2         = new SweetAlert2();
+        $XOOPS_TOKEN_REQUEST = $GLOBALS['xoopsSecurity']->createToken();
+        $SweetAlert2->setVar('method', 'post');
+        $SweetAlert2->render('del_page_tab', "post.php?op=del_page_tab&XOOPS_TOKEN_REQUEST={$XOOPS_TOKEN_REQUEST}&nsn=$nsn&sort=", 'sort');
 
         require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
 
@@ -1852,7 +1856,7 @@ class Tadnews
         $tab_editor = '';
         if (!empty($tab_arr['tab_content']) && is_array($tab_arr['tab_content'])) {
             foreach ($tab_arr['tab_content'] as $k => $content) {
-                $CkEditor                  = new CkEditor('tadnews', "tab_content[$k]", $content ?? '');
+                $CkEditor = new CkEditor('tadnews', "tab_content[$k]", $content ?? '');
                 $CkEditor->setHeight(300);
                 $tab_arr['tab_editor'][$k] = $CkEditor->render();
                 $tab_arr['tab_title'][$k]  = isset($tab_arr['tab_title'][$k]) ? $myts->htmlSpecialChars($tab_arr['tab_title'][$k]) : '';
@@ -2153,10 +2157,7 @@ class Tadnews
     {
         global $xoopsDB, $xoopsUser, $xoopsModuleConfig;
 
-        //安全判斷（表單的 token 由 tad_news_form() 以 Utility::token_form() 產生）
-        if (!$GLOBALS['xoopsSecurity']->check()) {
-            redirect_header('index.php', 3, implode('<br>', (Array) $GLOBALS['xoopsSecurity']->getErrors()));
-        }
+        Utility::xoops_security_check('', '', 'index.php');
 
         if (empty($_POST['enable_group']) or in_array('', $_POST['enable_group'])) {
             $enable_group = '';
@@ -2392,11 +2393,6 @@ class Tadnews
     {
         global $xoopsDB, $xoopsModuleConfig;
 
-        //安全判斷（表單的 token 由 tad_news_form() 以 Utility::token_form() 產生）
-        if (!$GLOBALS['xoopsSecurity']->check()) {
-            redirect_header('index.php', 3, implode('<br>', (Array) $GLOBALS['xoopsSecurity']->getErrors()));
-        }
-
         //確認有管理員或本人才能管理
         $news = $this->get_tad_news($nsn, $xoopsModuleConfig['uid_chk']);
 
@@ -2631,16 +2627,16 @@ class Tadnews
     {
         global $xoopsDB, $xoopsTpl;
 
-        $sql = 'SELECT LEFT(`start_day`, 7), COUNT(*) FROM `' . $xoopsDB->prefix('tad_news') . '` WHERE `enable`=? GROUP BY LEFT(`start_day`, 7) ORDER BY `start_day` DESC';
+        $sql    = 'SELECT LEFT(`start_day`, 7), COUNT(*) FROM `' . $xoopsDB->prefix('tad_news') . '` WHERE `enable`=? GROUP BY LEFT(`start_day`, 7) ORDER BY `start_day` DESC';
         $result = Utility::query($sql, 's', [1]) or Utility::web_error($sql, __FILE__, __LINE__);
 
         // 初始化月份選項陣列
         $opt = [];
         $i   = 1;
         while (list($ym, $count) = $xoopsDB->fetchRow($result)) {
-            $opt[$i]['value'] = $ym;
-            $opt[$i]['count'] = $count;
-            $opt[$i]['text'] = str_replace('-', '' . _MD_TADNEWS_YEAR, $ym) . _MD_TADNEWS_MONTH;
+            $opt[$i]['value']    = $ym;
+            $opt[$i]['count']    = $count;
+            $opt[$i]['text']     = str_replace('-', '' . _MD_TADNEWS_YEAR, $ym) . _MD_TADNEWS_MONTH;
             $opt[$i]['selected'] = $now_date == $ym ? 'selected' : '';
             $i++;
         }
