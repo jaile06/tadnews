@@ -56,7 +56,7 @@ class Tag
         $SweetAlert2         = new SweetAlert2();
         $XOOPS_TOKEN_REQUEST = $GLOBALS['xoopsSecurity']->createToken();
         $SweetAlert2->setVar('method', 'post');
-        $SweetAlert2->render('delete_tag', 'tag.php?op=del_tag&XOOPS_TOKEN_REQUEST={$XOOPS_TOKEN_REQUEST}&tag_sn=', 'tag_sn');
+        $SweetAlert2->render('delete_tag', "tag.php?op=del_tag&XOOPS_TOKEN_REQUEST={$XOOPS_TOKEN_REQUEST}&tag_sn=", 'tag_sn');
     }
 
     public static function insert_tad_news_tags()
